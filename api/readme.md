@@ -1,7 +1,7 @@
 ### Step to execute
 
 ```bash
-git clone {link}
+git clone https://github.com/vinicinbgs/superplayer-test.git
 
 cd superplayer/api
 
