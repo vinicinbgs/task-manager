@@ -6,6 +6,7 @@ const ProjectsTasksController = require("../http/controllers/ProjectTasksControl
 // Projects
 router.get("/projects", ProjectsController.index);
 router.post("/projects", ProjectsController.store);
+router.delete("/projects/:id", ProjectsController.delete);
 
 // Project Tasks
 router.post("/projects/:project_id/tasks", ProjectsTasksController.store);

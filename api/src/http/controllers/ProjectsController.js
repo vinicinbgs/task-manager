@@ -1,11 +1,12 @@
 const CreateProjectUseCase = require("../../useCases/Projects/CreateProjectUseCase");
 const GetProjectsUseCase = require("../../useCases/Projects/GetProjectsUseCase");
+const DeleteProjectUseCase = require("../../useCases/Projects/DeleteProjectUseCase");
 
 module.exports = {
   async index(req, res) {
     const projects = await GetProjectsUseCase.execute();
 
-    return res.end(JSON.stringify(projects));
+    return res.status(200).send(projects);
   },
 
   async store(req, res) {
@@ -15,6 +16,16 @@ module.exports = {
       name,
     });
 
-    return res.end(JSON.stringify(project));
+    return res.status(200).send(project);
   },
+
+  async delete (req, res) {
+    const { id } = req.params;
+
+    await DeleteProjectUseCase.execute({
+      id
+    })
+
+    return res.status(201).send();
+  }
 };
