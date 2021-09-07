@@ -7,6 +7,7 @@
 you need to clone this repository and in root folder where have the docker-compose.yml, execute:
 ```
 docker-compose up -d --build
+docker-compose exec api yarn sequelize db:migrate
 ```
 
 after run this command you can open in browser http://localhost:3000

@@ -9,7 +9,7 @@ yarn
 
 sudo docker-compose up -d
 
-sequelize db:migrate
+yarn sequelize db:migrate
 
 yarn test
 
