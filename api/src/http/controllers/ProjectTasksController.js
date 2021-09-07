@@ -7,6 +7,10 @@ module.exports = {
   async store(req, res) {
     const validatedData = await storeValidate(req, res);
     
+    if (validatedData.title == 'error') {
+      return res.status(422).send(validatedData);
+    }
+
     const task = await CreateTaskUseCase.execute(validatedData);
 
     if (!task) {

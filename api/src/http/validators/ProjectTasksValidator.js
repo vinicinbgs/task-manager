@@ -21,7 +21,7 @@ const storeValidate = async (req, res) => {
 
     return validate;
   } catch (e) {
-    return res.status(422).send(returnError(e)); 
+    return returnError(e);
   }
 }
 

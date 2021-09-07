@@ -75,15 +75,15 @@ const Cards: React.FC<Props> = ({ id, name, date, tasks }: Props): JSX.Element =
     
     const { value }: any = newTaskRef.current;
 
-    const fields = value.split('#');
+    const [task, owner, date] = value.split(/@|#/);
 
     fetch('/api/tasks', {
       method: 'post',
       body: JSON.stringify({
         project_id: id,
-        name: fields[0],
-        owner: fields[1],
-        expire_at: fields[2] ?? new Date()
+        name: task,
+        owner: owner,
+        expire_at: date ?? new Date()
       })
     }).then(async (task) => {
       const obj = await task.json();
@@ -186,7 +186,7 @@ const Cards: React.FC<Props> = ({ id, name, date, tasks }: Props): JSX.Element =
 
         {listOfTasks && <Line />}
 
-        <NewTask data-type="new-task" ref={newTaskRef} type="text" placeholder="task description # owner # due date" onKeyPress={ handleCreateNewTask }/>
+        <NewTask data-type="new-task" ref={newTaskRef} type="text" placeholder="task description @owner #due date (yyyy-mm-dd)" onKeyPress={ handleCreateNewTask }/>
 
       </Container>
     </div>
