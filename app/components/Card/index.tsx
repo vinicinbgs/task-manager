@@ -18,7 +18,20 @@ type Props = {
 const Cards: React.FC<Props> = ({ id, name, date, tasks }: Props): JSX.Element => {
   const newProjectRef: any = useRef(null);
   const newTaskRef: any = useRef(null);
+  
   const [listOfTasks, setTasks] = useState(tasks ?? []);
+  
+  const [checkedTasks, setCheckedTasks] = useState(tasks?.filter((curr: ITask) => {
+    if (curr.done_at) {
+      return curr;
+    }
+  }) ?? []);
+
+  const [lateTasks, setLateTasks] =  useState(tasks?.filter((curr: ITask) => {
+    if (new Date(curr.expire_at) <= new Date() && !curr.done_at) {
+      return curr;
+    }
+  }) ?? []);
 
   const handleCreateNewProject = (e: any) => {
     if (e.key !== 'Enter') {
@@ -29,6 +42,7 @@ const Cards: React.FC<Props> = ({ id, name, date, tasks }: Props): JSX.Element =
     
     if (!value) {
       newProjectRef.current.classList.add('form-error');
+      notify('You need to inform the project name')
       return;
     }
     
@@ -96,6 +110,11 @@ const Cards: React.FC<Props> = ({ id, name, date, tasks }: Props): JSX.Element =
       } else {
         setTasks([...listOfTasks, obj.data])
         newTaskRef.current.value = '';
+        console.log(obj.data);
+        if (obj && new Date(obj.data.expire_at) <= new Date() && !obj.data.done_at) {
+          let lates = [...lateTasks, ...[obj.data]]
+          obj && setLateTasks(lates)
+        }
       }
     });
 
@@ -106,6 +125,19 @@ const Cards: React.FC<Props> = ({ id, name, date, tasks }: Props): JSX.Element =
     const isChecked = e.target.checked;
     const { id, project_id } = e.target.dataset;
     
+    if (isChecked) {
+      const task = tasks?.filter(task => task.id == id)
+      task && setCheckedTasks([...checkedTasks, ...task])
+      task && setLateTasks(lateTasks.filter(task => task.id != id))
+    } else {
+      const task = tasks?.filter(task => task.id == id)
+      setCheckedTasks(checkedTasks.filter(task => task.id != id))
+
+      if (task && new Date(task[0].expire_at) <= new Date() && !task[0].done_at) {
+        task && setLateTasks([...lateTasks, ...task])
+      }
+    }
+
     fetch('/api/tasks', {
       method: 'put',
       body: JSON.stringify({
@@ -128,6 +160,9 @@ const Cards: React.FC<Props> = ({ id, name, date, tasks }: Props): JSX.Element =
   const listTasks = (task: ITask) => {
     let expireAt = new Date(task.expire_at).toLocaleDateString('pt-BR');
     let now = new Date().toLocaleDateString('pt-BR');
+    
+    let tomorrow = new Date();
+    tomorrow.setDate((new Date()).getDate() + 1);
   
     let isExpired = now > expireAt && !task.done_at;
 
@@ -144,7 +179,9 @@ const Cards: React.FC<Props> = ({ id, name, date, tasks }: Props): JSX.Element =
         
         <span data-type="name" title="Task Description">{ task.name } </span>
         <span data-type="owner" title="Owner">@{ task.owner } </span>
-        <span data-type="expire_at" title="Expire at"> # { expireAt } </span>
+        <span data-type="expire_at" title="Expire at"> #
+          { (expireAt == tomorrow.toLocaleDateString('pt-BR')) ? 'tomorrow' : expireAt }
+        </span>
       </Task>
     )
   }
@@ -179,6 +216,7 @@ const Cards: React.FC<Props> = ({ id, name, date, tasks }: Props): JSX.Element =
           <CalendarIcon />
           {date}
         </CreatedAt>
+        <span>{ checkedTasks.length } done / { lateTasks.length } late / { listOfTasks.length } total</span>
         
         {listOfTasks && listOfTasks.map((task) => {
           return listTasks(task);
@@ -186,7 +224,13 @@ const Cards: React.FC<Props> = ({ id, name, date, tasks }: Props): JSX.Element =
 
         {listOfTasks && <Line />}
 
-        <NewTask data-type="new-task" ref={newTaskRef} type="text" placeholder="task description @owner #due date (yyyy-mm-dd)" onKeyPress={ handleCreateNewTask }/>
+        <NewTask
+          data-type="new-task"
+          ref={newTaskRef}
+          type="text"
+          placeholder="task description @owner #due date (yyyy-mm-dd)"
+          onKeyPress={handleCreateNewTask}
+        />
 
       </Container>
     </div>
