@@ -1,17 +1,36 @@
 # Task Manager
 
-#### Explain:
-- api - is the backend folder with nodejs
-- app - is the frontend folder with nextjs (SSR)
+### Explain:
+* api - is the backend folder with nodejs
+* app - is the frontend folder with nextjs (SSR)
 
-you need to clone this repository and in root folder where have the docker-compose.yml, execute:
-```
+```sh
+git clone https://github.com/vinicinbgs/task-manager.git
+
 docker-compose up -d --build
+
 docker-compose exec api yarn sequelize db:migrate
 ```
 
-after run this command you can open in browser http://localhost:3000
+after run this commands you can open in browser http://localhost:3000
 
-#### the API PORT is 9000
-#### the APP PORT is 3000
-#### the MySQL PORT is 3306
+<table>
+  <thead>
+    <th>Container</th>
+    <th>Port</th>
+  </thead>
+  <tbody>
+    <tr>
+      <td>API</td>
+      <td>9000</td>
+    </tr>
+    <tr>
+      <td>APP</td>
+      <td>3000</td>
+    </tr>
+    <tr>
+      <td>MySQL</td>
+      <td>3306</td>
+    </tr>
+  </tbody>
+</table>

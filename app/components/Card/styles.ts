@@ -3,19 +3,19 @@ import styled from 'styled-components';
 import { Calendar3, Trash } from '@styled-icons/bootstrap';
 
 export const Container = styled.div`
-  background: #e6e6e6;
+  background: #fff;
   color: #312e38;
-  min-height: 200px;
   max-height: 400px;
   border-radius: 10px;
   font-weight: 500;
-  border: 2px solid #C3E8C9;
-  box-shadow: 0 2px 10px black;
+  box-shadow: 0 1px 2px #a1a1a1;
   margin: 10px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
+  overflow: auto;
+  width: 100%;
 `;
 
 export const Name = styled.div`
@@ -23,6 +23,7 @@ export const Name = styled.div`
   font-weight: bold;
   font-style: italic;
   text-decoration: underline;
+  display: inline-block;
 `;
 
 export const CreatedAt = styled.div`
@@ -97,4 +98,8 @@ export const TrashButton = styled(Trash)`
   width: 20px;
   margin-left: 15px;
   cursor: pointer;
+`;
+
+export const Title = styled.div`
+  display: inline-block;
 `;

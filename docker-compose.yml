@@ -23,8 +23,6 @@ services:
     expose:
       - 3000
     restart: on-failure
-    environment:
-        - API_URL=http://api:9000
     networks:
       - default
 
@@ -33,11 +31,11 @@ services:
     ports: 
       - "3306:3306"
     environment:
-      MYSQL_DATABASE: superplayer
-      MYSQL_ROOT_PASSWORD: superplayer123
+      MYSQL_DATABASE: taskmanager
+      MYSQL_ROOT_PASSWORD: taskmanager123
     networks:
       - default
 
 networks: 
   default:
-    name: superplayer
+    name: taskmanager

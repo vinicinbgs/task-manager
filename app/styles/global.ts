@@ -9,7 +9,7 @@ export default createGlobalStyle`
   }
   
   body {
-    background: #312E38;
+    background: #807a70;
     color: #FFF;
     -webkit-font-smoothing: antialiased;
   }
@@ -29,7 +29,9 @@ export default createGlobalStyle`
 
   .container {
     display: flex;
-    width: 100%;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
     flex-direction: column;
   }
 
