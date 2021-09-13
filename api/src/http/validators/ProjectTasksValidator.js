@@ -7,7 +7,9 @@ const storeValidate = async (req, res) => {
     project_id: yup.number().required(),
     name: yup.string().required(),
     owner: yup.string().required(),
-    expire_at: yup.date().default(function () {
+    expire_at: yup.date().test('is-valid-format', 'Invalid date format', (val, { originalValue }) => {
+      return (String(originalValue).match(/^\d{4}-(((0)[0-9])|((1)[0-2]))-([0-2][0-9]|(3)[0-1])$/)) === null ? false : originalValue;
+    }).default(function () {
       return new Date();
     }),
   });

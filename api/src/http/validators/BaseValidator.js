@@ -3,7 +3,7 @@ const returnError = (errors) => {
   let title = "error";
 
   let fields = [];
-
+  
   errors.inner.map((error) => {
     fields.push({
       name: error.path,
