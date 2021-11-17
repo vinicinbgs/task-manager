@@ -47,9 +47,9 @@ const Cards: React.FC<Props> = ({
 			let expire = new Date(curr.expire_at).getTime();
 			let now = new Date().getTime();
 
-      if (expire <= now && !curr.done_at) {
-        return curr;
-      }
+			if (expire <= now && !curr.done_at) {
+				return curr;
+			}
 		}) ?? []
 	);
 
@@ -126,7 +126,7 @@ const Cards: React.FC<Props> = ({
 			} else {
 				setTasks([...listOfTasks, obj.data]);
 
-				newTaskRef.current.value = "";
+				newTaskRef.current.value = ""; // clear input field
 
 				if (
 					obj &&
@@ -145,12 +145,12 @@ const Cards: React.FC<Props> = ({
 
 		const { id, project_id } = e.target.dataset;
 
+		const task = listOfTasks?.filter((task) => task.id == id);
+
 		if (isChecked) {
-			const task = tasks?.filter((task) => task.id == id);
 			task && setCheckedTasks([...checkedTasks, ...task]);
 			task && setLateTasks(lateTasks.filter((task) => task.id != id));
 		} else {
-			const task = tasks?.filter((task) => task.id == id);
 			setCheckedTasks(checkedTasks.filter((task) => task.id != id));
 
 			if (
@@ -215,7 +215,7 @@ const Cards: React.FC<Props> = ({
 					#
 					{expireAt.getTime() == tomorrow.getTime()
 						? "tomorrow"
-						: expireAt.toLocaleDateString('pt-BR')}
+						: expireAt.toLocaleDateString("pt-BR")}
 				</span>
 			</Task>
 		);
