@@ -54,10 +54,8 @@ const Cards: React.FC<Props> = ({
 	);
 
 	const handleCreateNewProject = (e: any) => {
-		e.preventDefault();
-
 		if (e.key !== "Enter") {
-			return null;
+			return;
 		}
 
 		const { value }: any = newProjectRef.current;
