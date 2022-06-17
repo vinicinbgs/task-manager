@@ -22,8 +22,20 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/', routes);
 
+app.use((err, req, res, next) => {
+  return res.status(500).send('Something broke!')
+})
+
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
+});
+
+process.on('unhandledRejection', err => {
+  console.error('There was an uncaught error', err);
+});
+
+process.on('uncaughtException', err => {
+  console.error('There was an uncaught error', err);
 });
 
 module.exports = app;

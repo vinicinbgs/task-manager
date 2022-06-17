@@ -8,7 +8,9 @@
   "scripts": {
     "nodemon": "nodemon server.js",
     "test": "jest --detectOpenHandles --verbose",
-    "start": "node server.js"
+    "start": "node server.js",
+    "migrate": "yarn sequelize db:migrate",
+    "migrate:undo": "yarn sequelize db:migrate:undo:all"
   },
   "dependencies": {
     "cors": "^2.8.5",

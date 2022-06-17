@@ -40,7 +40,6 @@ const updateValidate = async (req, res) => {
         abortEarly: false
       }
     );
-
     return validate;
   } catch (e) {
     return res.status(422).send(returnError(e)); 
