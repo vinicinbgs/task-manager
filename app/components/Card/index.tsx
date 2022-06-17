@@ -1,279 +1,233 @@
 import React, { useRef, useState } from "react";
 
-import Router from "next/router";
-
 import { Toastr, notify } from "../Toast";
 
 import {
-	Container,
-	Title,
-	Name,
-	CreatedAt,
-	Line,
-	Task,
-	NewTask,
-	CalendarIcon,
-	Input,
-	TrashIcon,
-	TrashButton,
+  Container,
+  Title,
+  Name,
+  CreatedAt,
+  CloseButton,
+  CloseIcon,
+  Line,
+  NewTask,
+  CalendarIcon,
+  Input,
+  TasksStatus,
+  RightAlign
 } from "./styles";
 
 import ITask from "../../data/ITask";
+import Tasks from "./task";
 
 type Props = {
-	id: number;
-	name?: string;
-	date?: string;
-	tasks?: ITask[];
+  id: number;
+  name?: string;
+  date?: string;
+  tasks?: ITask[];
+  callback?: Function;
 };
 
 const Cards: React.FC<Props> = ({
-	id,
-	name,
-	date,
-	tasks,
+  id,
+  name,
+  date,
+  tasks,
+  callback,
 }: Props): JSX.Element => {
-	const newProjectRef: any = useRef(null);
-	const newTaskRef: any = useRef(null);
+  const newProjectRef: any = useRef(null);
+  const newTaskRef: any = useRef(null);
 
-	const [listOfTasks, setTasks] = useState(tasks ?? []);
+  const [listOfTasks, setTasks] = useState(tasks ?? []);
 
-	const [checkedTasks, setCheckedTasks] = useState(
-		tasks?.filter((curr: ITask) => (curr.done_at ? curr : null)) ?? []
-	);
+  const [lateTasks, setLateTasks] = useState(
+    tasks?.filter((curr: ITask) => {
+      let expire = new Date(curr.expire_at).getTime();
+      let now = new Date().getTime();
 
-	const [lateTasks, setLateTasks] = useState(
-		tasks?.filter((curr: ITask) => {
-			let expire = new Date(curr.expire_at).getTime();
-			let now = new Date().getTime();
+      if (expire <= now && !curr.done_at) {
+        return curr;
+      }
+    }) ?? []
+  );
 
-			if (expire <= now && !curr.done_at) {
-				return curr;
-			}
-		}) ?? []
-	);
+  const [checkedTasks, setCheckedTasks] = useState<any>(
+    tasks?.filter((curr: ITask) => (curr.done_at ? curr : null)) ?? []
+  );
 
-	const handleCreateNewProject = (e: any) => {
-		if (e.key !== "Enter") {
-			return;
-		}
+  const handleCreateNewProject = async (e: any) => {
+    if (e.key !== "Enter") {
+      return;
+    }
 
-		const { value }: any = newProjectRef.current;
+    const { value }: any = newProjectRef.current;
 
-		if (!value) {
-			newProjectRef.current.classList.add("form-error");
-			notify("You need to inform the project name");
-			return;
-		}
+    if (!value) {
+      newProjectRef.current.classList.add("form-error");
+      notify("You need to inform the project name");
+      return;
+    }
 
-		fetch("/api/projects", {
-			method: "post",
-			body: JSON.stringify({
-				name: value,
-			}),
-		}).then(async (project) => {
-			const obj = await project.json();
+    const project: any = await fetch("/api/projects", {
+      method: "post",
+      body: JSON.stringify({
+        name: value,
+      }),
+    });
 
-			if (obj.title == "error") {
-				obj.errors.map((error: any) => {
-					return notify(error.error);
-				});
-			} else {
-				Router.reload();
-			}
-		});
-	};
+    const obj = await project.json();
 
-	const handleDeleteProject = (e: any) => {
-		e.preventDefault();
+    if (obj.title == "error") {
+      obj.errors.map((error: any) => {
+        return notify(error.error);
+      });
 
-		const { id } = e.target.dataset;
+      return;
+    }
 
-		fetch("/api/projects", {
-			method: "delete",
-			body: JSON.stringify({
-				id,
-			}),
-		}).then(async () => {
-			Router.reload();
-		});
-	};
+    notify("Project inserted with success", "success");
 
-	const handleCreateNewTask = (e: any) => {
-		if (e.key !== "Enter") {
-			return null;
-		}
+    callback && callback({ project: { ...obj.data, tasks: [] } });
+  };
 
-		const { value }: any = newTaskRef.current;
+  const handleDeleteProject = async (e: any) => {
+    e.preventDefault();
 
-		const [task, owner, date] = value.split(/@|#/);
+    const { id } = e.target.dataset;
 
-		fetch("/api/tasks", {
-			method: "post",
-			body: JSON.stringify({
-				project_id: id,
-				name: task?.trim(),
-				owner: owner?.trim(),
-				expire_at: date?.trim() ?? new Date().toISOString().split("T")[0],
-			}),
-		}).then(async (task) => {
-			const obj = await task.json();
+    await fetch("/api/projects/", {
+      method: "delete",
+      body: JSON.stringify({
+        id,
+      }),
+    });
 
-			if (obj.title == "error") {
-				obj.errors.map((error: any) => {
-					return notify(error.error);
-				});
-			} else {
-				setTasks([...listOfTasks, obj.data]);
+    notify("Project Deleted with success");
 
-				newTaskRef.current.value = ""; // clear input field
+    callback &&
+      callback({
+        project: {
+          id,
+          action: "delete",
+        },
+      });
+  };
 
-				if (
-					obj &&
-					new Date(obj.data.expire_at) <= new Date() &&
-					!obj.data.done_at
-				) {
-					let lates = [...lateTasks, ...[obj.data]];
-					obj && setLateTasks(lates);
-				}
-			}
-		});
-	};
+  const handleCreateNewTask = (e: any) => {
+    if (e.key !== "Enter") {
+      return null;
+    }
 
-	const handleCheckTask = (e: any) => {
-		const isChecked = e.target.checked;
+    const { value }: any = newTaskRef.current;
 
-		const { id, project_id } = e.target.dataset;
+    const [task, owner, date] = value.split(/@|#/);
 
-		const task = listOfTasks?.filter((task) => task.id == id);
+    fetch("/api/tasks", {
+      method: "post",
+      body: JSON.stringify({
+        project_id: id,
+        name: task?.trim(),
+        owner: owner?.trim(),
+        expire_at: date?.trim() ?? new Date().toISOString().split("T")[0],
+      }),
+    }).then(async (task) => {
+      const obj = await task.json();
 
-		if (isChecked) {
-			task && setCheckedTasks([...checkedTasks, ...task]);
-			task && setLateTasks(lateTasks.filter((task) => task.id != id));
-		} else {
-			setCheckedTasks(checkedTasks.filter((task) => task.id != id));
+      if (obj.title == "error") {
+        obj.errors.map((error: any) => {
+          return notify(error.error);
+        });
+      } else {
+        setTasks([...listOfTasks, obj.data]);
 
-			if (
-				task &&
-				new Date(task[0].expire_at) <= new Date() &&
-				!task[0].done_at
-			) {
-				task && setLateTasks([...lateTasks, ...task]);
-			}
-		}
+        newTaskRef.current.value = ""; // clear input field
 
-		fetch("/api/tasks", {
-			method: "put",
-			body: JSON.stringify({
-				id,
-				project_id,
-				done: isChecked,
-			}),
-		}).then(async (task) => {
-			const obj = await task.json();
+        if (
+          obj &&
+          new Date(obj.data.expire_at) <= new Date() &&
+          !obj.data.done_at
+        ) {
+          let lates = [...lateTasks, ...[obj.data]];
+          obj && setLateTasks(lates);
+        }
+      }
+    });
+  };
 
-			if (obj.title == "error") {
-				obj.errors.map((error: any) => {
-					return notify(error.error);
-				});
-			}
-		});
-	};
+  const callbackCheckedTask = (isChecked: boolean, id: Number) => {
+    const task = listOfTasks?.filter((task) => task.id == id);
 
-	const taskLine = (task: ITask) => {
-		let expireAt = new Date(task.expire_at);
-		let now = new Date();
+    if (isChecked) {
+      task && setCheckedTasks([...checkedTasks, ...task]);
+      task && setLateTasks(lateTasks.filter((task) => task.id != id));
+    } else {
+      setCheckedTasks(
+        checkedTasks.filter((task: { id: Number }) => task.id != id)
+      );
 
-		let tomorrow = new Date();
-		tomorrow.setDate(new Date().getDate() + 1);
+      if (task && new Date(task[0].expire_at) <= new Date()) {
+        console.log(task);
+        setLateTasks([...lateTasks, ...task]);
+      }
+    }
+  };
 
-		let isExpired = now.getTime() >= expireAt.getTime() && !task.done_at;
+  if (id === 0) {
+    return (
+      <div key={id} className="container">
+        <Container>
+          <Input
+            key={id}
+            name="name"
+            ref={newProjectRef}
+            title="Project name"
+            placeholder="Write here the project name"
+            onKeyPress={handleCreateNewProject}
+          />
+        </Container>
+      </div>
+    );
+  }
 
-		return (
-			<Task
-				data-type="task"
-				key={task.id}
-				className={isExpired ? "expired" : ""}
-			>
-				<input
-					data-id={task.id}
-					data-project_id={task.project_id}
-					type="checkbox"
-					onChange={handleCheckTask}
-					value="true"
-					defaultChecked={task.done_at ? true : false}
-				/>
+  return (
+    <div key={id} className="container">
+      <Toastr />
+      <Container>
+        <RightAlign>
+        <CloseButton data-id={id} onClick={handleDeleteProject} title="Delete Project">
+            <CloseIcon />
+          </CloseButton>
+          </RightAlign>
+        <Title>
+          <Name title="Project name">{name}</Name>
+          <CreatedAt title="Created at">
+            <CalendarIcon />
+            Creation Date - 
+            <strong style={{ fontWeight: 700 }}>{date}</strong>
+          </CreatedAt>
+          <TasksStatus>
+            {checkedTasks.length} done / {lateTasks.length} late /{" "}
+            {listOfTasks.length} total
+          </TasksStatus>
+        </Title>
 
-				<span data-type="name" title="Task Description">
-					{task.name}{" "}
-				</span>
-				<span data-type="owner" title="Owner">
-					@{task.owner}{" "}
-				</span>
-				<span data-type="expire_at" title="Expire at">
-					{" "}
-					#
-					{expireAt.getTime() == tomorrow.getTime()
-						? "tomorrow"
-						: expireAt.toLocaleDateString("pt-BR")}
-				</span>
-			</Task>
-		);
-	};
+        {listOfTasks &&
+          listOfTasks.map((task) => (
+            <Tasks key={task.id} task={task} callback={callbackCheckedTask} />
+          ))}
 
-	if (id === 0) {
-		return (
-			<div key={id} className="container">
-				<Container>
-					<Input
-						key={id}
-						name="name"
-						ref={newProjectRef}
-						title="Project name"
-						placeholder="Write here the project name"
-						onKeyPress={handleCreateNewProject}
-					/>
-				</Container>
-			</div>
-		);
-	}
+        {listOfTasks && <Line />}
 
-	return (
-		<div key={id} className="container">
-			<Toastr />
-			<Container>
-				<Title>
-					<Name title="Project name">{name}</Name>
-					<TrashButton data-id={id} onClick={handleDeleteProject}>
-						<TrashIcon />
-					</TrashButton>
-				</Title>
-				<CreatedAt title="Created at">
-					<CalendarIcon />
-					{date}
-				</CreatedAt>
-				<span>
-					{checkedTasks.length} done / {lateTasks.length} late /{" "}
-					{listOfTasks.length} total
-				</span>
-
-				{listOfTasks &&
-					listOfTasks.map((task) => {
-						return taskLine(task);
-					})}
-
-				{listOfTasks && <Line />}
-
-				<NewTask
-					data-type="new-task"
-					ref={newTaskRef}
-					type="text"
-					placeholder="task description @owner #due date (yyyy-mm-dd)"
-					onKeyPress={handleCreateNewTask}
-				/>
-			</Container>
-		</div>
-	);
+        <label>Input: task description @owner #due date (yyyy-mm-dd)</label>
+        <NewTask
+          data-type="new-task"
+          ref={newTaskRef}
+          type="text"
+          onKeyPress={handleCreateNewTask}
+        />
+      </Container>
+    </div>
+  );
 };
 
 export default Cards;

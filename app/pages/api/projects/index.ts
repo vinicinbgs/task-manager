@@ -1,10 +1,10 @@
-import api from './_api';
+import api from '../_api';
 
-import IProjects from '../../data/IProject';
+import IProjects from '../../../data/IProject';
 
 export default async (req: any, res: any) => { 
   const { id, name } = JSON.parse(req.body);
-
+  
   let response;
 
   switch (req.method) {
@@ -27,6 +27,7 @@ export default async (req: any, res: any) => {
   
          return res.status(201).json();
       } catch (e: any) {
+        console.log(e)
          return res.status(e.response.data.status).json(e.response.data)
       }
   }

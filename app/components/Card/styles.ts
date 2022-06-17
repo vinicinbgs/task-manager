@@ -1,6 +1,27 @@
 import styled from 'styled-components';
 
-import { Calendar3, Trash } from '@styled-icons/bootstrap';
+import { Calendar3, XLg } from '@styled-icons/bootstrap';
+
+export const CloseIcon = styled(XLg)`
+  width: 1.2em;
+  color: #312E38;
+  pointer-events: none;
+  text-align: center;
+  color: #ffadad;
+  padding-bottom: 5px;
+`;
+
+export const CloseButton = styled.button`
+  background: transparent;
+  border: none;
+  width: 20px;
+  cursor: pointer;
+`;
+
+export const RightAlign = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`
 
 export const Container = styled.div`
   background: #fff;
@@ -21,21 +42,27 @@ export const Container = styled.div`
 export const Name = styled.div`
   font-size: 26px;
   font-weight: bold;
-  font-style: italic;
   text-decoration: underline;
-  display: inline-block;
+  display: flex;
+  margin-left: 10px;
+  text-transform: capitalize;
+  justify-content: center;
 `;
 
 export const CreatedAt = styled.div`
   font-size: 17px;
-  padding: 10px;
+  margin-top: 10px;
   display: flex;
   align-items: center;
   color: #333;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 `;
 
 export const Task = styled.label`
+  margin-top: 10px;
+  width: 100%;
+  display: flex;
+
   span[data-type="name"] {
     margin-left: 5px;
     font-size: 16x;
@@ -45,12 +72,14 @@ export const Task = styled.label`
     margin-left: 5px;
     font-size: 16x;
     color: #747573;
+    text-align: center;
   }
 
   span[data-type="expire_at"] {
     margin-left: 5px;
     font-size: 16x;
-    color: #747573
+    color: #747573;
+    text-align: right;
   }
 
   input[type="checkbox"]:checked + span {
@@ -87,19 +116,18 @@ export const Input = styled.input`
   border-bottom: 1px solid black;
 `;
 
-export const TrashIcon = styled(Trash)`
-  width: 1.2em;
-  color: #312E38;
-`;
-
-export const TrashButton = styled(Trash)`
-  background: transparent;
-  border: none;
-  width: 20px;
-  margin-left: 15px;
-  cursor: pointer;
-`;
-
 export const Title = styled.div`
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0 10px 10px;
+  background-color: #f7f7f7;
+  border-radius: 30px;
+  border: 2px solid #e6e6e6;
+  width: 100%;
+`;
+
+export const TasksStatus = styled.div`
+  text-align: right;
+  margin-right: 20px;
+  color: #706f6f;
 `;

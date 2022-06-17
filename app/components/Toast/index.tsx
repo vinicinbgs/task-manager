@@ -1,19 +1,22 @@
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast, TypeOptions } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Toastr = (props: any) => {
   return <ToastContainer {...props} />
-}
+} 
 
-function notify(text: string) {
+function notify(text: string, type?: TypeOptions) {
   toast(text, {
     position: "top-right",
-    autoClose: 5000,
-    hideProgressBar: false,
+    autoClose: 4500,
+    hideProgressBar: true,
     closeOnClick: true,
     pauseOnHover: false,
     draggable: false,
-    progress: undefined
+    type: type || 'info',
+    onClick: () => {
+      toast.dismiss();
+    }
   });
 }
 

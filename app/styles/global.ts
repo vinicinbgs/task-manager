@@ -6,6 +6,7 @@ export default createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
     outline: 0;
+    font-family: 'Monospace', sans-serif;
   }
   
   body {
@@ -31,7 +32,8 @@ export default createGlobalStyle`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 80%;
+    width: 90%;
+    max-width: 1500px;
     flex-direction: column;
   }
 
