@@ -1,13 +1,9 @@
 ### Step to execute
 
 ```bash
-git clone https://github.com/vinicinbgs/superplayer-test.git
-
-cd superplayer/api
-
 yarn
 
-sudo docker-compose up -d
+docker-compose up -d
 
 yarn sequelize db:migrate
 
@@ -21,14 +17,12 @@ yarn start
 
 
 ### Request Lifecycle
-```
+```bash
   request -> controllers -> useCases -> models
      response   <-            <-          <-
 ```
 
 ### If you want reset the database
-```
-cd superplayer/api
-
+```bash
 sequelize db:migrate:undo
 ```

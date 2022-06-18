@@ -7,12 +7,10 @@
 ```sh
 git clone https://github.com/vinicinbgs/task-manager.git
 
-docker-compose up -d --build
-
-docker-compose exec api yarn sequelize db:migrate
+sh setup.sh
 ```
 
-after run this commands you can open in browser http://localhost:3000
+after run this commands you can open in browser http://localhost:3002
 
 <table>
   <thead>
@@ -22,11 +20,11 @@ after run this commands you can open in browser http://localhost:3000
   <tbody>
     <tr>
       <td>API</td>
-      <td>9000</td>
+      <td>9002</td>
     </tr>
     <tr>
       <td>APP</td>
-      <td>3000</td>
+      <td>3002</td>
     </tr>
     <tr>
       <td>MySQL</td>
