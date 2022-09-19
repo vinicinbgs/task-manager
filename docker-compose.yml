@@ -31,7 +31,7 @@ services:
       - default
 
   db:
-    image: mysql
+    image: mysql:8.0.29
     platform: linux/amd64
     command: --default-authentication-plugin=mysql_native_password
     ports: 
@@ -44,7 +44,6 @@ services:
       MYSQL_PASSWORD: taskmanager123
     networks:
       - default
-
 networks: 
   default:
     name: taskmanager

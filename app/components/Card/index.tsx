@@ -87,6 +87,8 @@ const Cards: React.FC<Props> = ({
 
     notify("Project inserted with success", "success");
 
+    newProjectRef.current.value = '';
+
     callback && callback({ project: { ...obj.data, tasks: [] } });
   };
 
@@ -121,7 +123,7 @@ const Cards: React.FC<Props> = ({
     const { value }: any = newTaskRef.current;
 
     const [task, owner, date] = value.split(/@|#/);
-
+    
     fetch("/api/tasks", {
       method: "post",
       body: JSON.stringify({

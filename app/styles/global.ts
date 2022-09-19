@@ -6,7 +6,7 @@ export default createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
     outline: 0;
-    font-family: 'Monospace', sans-serif;
+    font-family: 'Roboto', sans-serif !important;
   }
   
   body {
